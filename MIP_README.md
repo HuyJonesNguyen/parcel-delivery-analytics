@@ -130,7 +130,7 @@ python src/mip_facility_opening.py
 python src/mip_figures.py
 ```
 
-Steps 32 and 33 take about 80 seconds and three minutes. `mip_figures.py` redraws the three charts in this README from the result tables, so they stay in step with the model.
+Steps 32 and 33 take about 80 seconds and three minutes. `src/mip_figures.py` redraws the three charts in this README from the result tables, so they stay in step with the model.
 
 ## Files
 

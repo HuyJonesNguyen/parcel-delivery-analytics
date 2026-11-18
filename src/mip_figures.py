@@ -1,7 +1,13 @@
 """Figures for the MIP results, saved as PNG files for the README.
 
-Run from the project root, after Steps 31, 32 and 33:
+This script lives in src/ with the other scripts. The charts are
+always saved in the figures/ folder at the project root, wherever
+the script is run from.
+
+Run after Steps 31, 32 and 33:
     python src/mip_figures.py
+
+A chart whose step has not been run yet is skipped with a message.
 
 Reads the result tables in data/processed/mip_network.duckdb and
 writes three charts to the figures/ folder:
@@ -24,6 +30,7 @@ from mip_common import MIP_DB_PATH, PROJECT_ROOT
 # SETTINGS
 # ============================================================
 
+# Charts go to <project root>/figures, not next to this script.
 FIGURES_DIR = PROJECT_ROOT / "figures"
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -239,7 +246,9 @@ def chart_candidate_costs(con):
 
     tables = {row[0] for row in con.execute("SHOW TABLES").fetchall()}
     if "mip_candidate_comparison" not in tables:
-        raise ValueError("Run Step 33 before drawing this chart.")
+        raise ValueError(
+            "Run Step 33 first: python src/mip_facility_opening.py"
+        )
 
     n_parcels = con.execute("""
         SELECT n_parcels
@@ -324,6 +333,15 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"MIP database not found: {MIP_DB_PATH}")
 
     with duckdb.connect(str(MIP_DB_PATH), read_only=True) as con:
-        chart_linehaul_cost(con)
-        chart_network_map(con)
-        chart_candidate_costs(con)
+
+        for draw_chart in (
+            chart_linehaul_cost,
+            chart_network_map,
+            chart_candidate_costs,
+        ):
+            # A chart needs its step's results. If they are missing,
+            # say which step to run and carry on with the next chart.
+            try:
+                draw_chart(con)
+            except (ValueError, duckdb.CatalogException) as problem:
+                print(f"Skipped {draw_chart.__name__}: {problem}")
