@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-SEED = 2025
+SEED = 2026
 N_PARCELS = 500_000
 
 rng = np.random.default_rng(SEED)

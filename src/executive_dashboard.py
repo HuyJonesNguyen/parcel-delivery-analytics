@@ -754,4 +754,4 @@ print(f"PNG: {dashboard_png}")
 print(f"PDF: {dashboard_pdf}")
 
 # Display the finished dashboard.
-plt.show()
+plt.close(fig)
